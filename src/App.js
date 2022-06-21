@@ -8,36 +8,18 @@ function App() {
             {
                 squares: Array(9).fill(null),
             },
-            // {
-            //     squares: ["X", null, null, null, null, null, null, null, null],
-            // },
         ],
         xIsNext: true,
         stepCount: 0,
     });
 
-    // let state = {
-    //     history: [
-    //         {
-    //             squares: Array(9).fill(null),
-    //         },
-    //         {
-    //             squares: Array(9).fill("O"),
-    //         },
-    //     ],
-    //     xIsNext: true,
-    //     stepCount: 0,
-    // };
-    const { history } = data;
-    const winner = calculateWinner(data.history[data.stepCount].squares);
-    // console.log(data.history);
-    const moves = history.map((obj, index) => {
-        // console.log(index);
+    const { history, stepCount } = data;
+    const winner = calculateWinner(history[stepCount].squares);
+    const moves = history.map((step, move) => {
+        const desc = move ? "Go to move #" + move : "Go to start";
         return (
-            <li key={index}>
-                <button onClick={goTo(index)}>
-                    {index > 0 ? "Move#" + index : "Reset"}
-                </button>
+            <li key={move}>
+                <button onClick={() => goTo(move)}>{desc}</button>
             </li>
         );
     });
@@ -89,16 +71,6 @@ function App() {
             stepCount: history.length,
             xIsNext: !data.xIsNext,
         });
-        console.log(data.history);
-        // state = {
-        //     history: history.concat([
-        //         {
-        //             squares: squares,
-        //         },
-        //     ]),
-        //     stepCount: history.length,
-        //     xIsNext: !state.xIsNext,
-        // };
     }
 
     function goTo(index) {
@@ -106,10 +78,6 @@ function App() {
             xIsNext: index % 2 === 0,
             stepCount: index,
         });
-        // state = {
-        //     xIsNext: index % 2 === 0,
-        //     stepCount: index,
-        // };
     }
 
     return (
