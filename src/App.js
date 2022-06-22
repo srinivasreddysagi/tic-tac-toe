@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import Board from "./Board";
+import Moves from "./Moves";
 
 function App() {
     const [data, setData] = useState({
@@ -12,48 +13,6 @@ function App() {
         xIsNext: true,
         stepCount: 0,
     });
-
-    const { history, stepCount } = data;
-    const winner = calculateWinner(history[stepCount].squares);
-    const moves = history.map((step, move) => {
-        const desc = move ? "Go to move #" + move : "Go to start";
-        return (
-            <li key={move}>
-                <button onClick={() => goTo(move)}>{desc}</button>
-            </li>
-        );
-    });
-
-    let status;
-    if (winner) {
-        status = "Winner: " + winner;
-    } else {
-        status = "Next player: " + (data.xIsNext ? "X" : "O");
-    }
-
-    function calculateWinner(squares) {
-        const lines = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6],
-        ];
-        for (let i = 0; i < lines.length; i++) {
-            const [a, b, c] = lines[i];
-            if (
-                squares[a] &&
-                squares[a] === squares[b] &&
-                squares[a] === squares[c]
-            ) {
-                return squares[a];
-            }
-        }
-        return null;
-    }
 
     function handleClick(i) {
         const history = data.history.slice(0, data.stepCount + 1);
@@ -73,11 +32,23 @@ function App() {
         });
     }
 
-    function goTo(index) {
+    function goTo(step) {
+        console.log(step);
         setData({
-            xIsNext: index % 2 === 0,
-            stepCount: index,
+            history: data.history,
+            xIsNext: step % 2 === 0,
+            stepCount: step,
         });
+    }
+
+    const { history, stepCount } = data;
+    const winner = calculateWinner(history[stepCount].squares);
+
+    let status;
+    if (winner) {
+        status = "Winner: " + winner;
+    } else {
+        status = "Next player: " + (data.xIsNext ? "X" : "O");
     }
 
     return (
@@ -91,11 +62,35 @@ function App() {
                 />
             </div>
             <div className="travel">
-                <div>{status}</div>
-                <ol className="btn-container">{moves}</ol>
+                <div className="status">{status}</div>
+                <Moves memory={history} goTo={goTo}></Moves>
             </div>
         </div>
     );
+}
+
+function calculateWinner(squares) {
+    const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
+    for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (
+            squares[a] &&
+            squares[a] === squares[b] &&
+            squares[a] === squares[c]
+        ) {
+            return squares[a];
+        }
+    }
+    return null;
 }
 
 export default App;
